@@ -1,7 +1,12 @@
 /*
  * Create a list that holds all of your cards
  */
-
+const cards = document.getElementsByClassName('deck')[0].children;
+const cardList = [];
+for(let card of cards){
+    let name = card.children[0].className.slice(3);
+    cardList.push(name);
+}
 
 /*
  * Display the cards on the page
