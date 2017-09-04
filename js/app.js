@@ -4,6 +4,9 @@
 const deck = document.getElementsByClassName('deck');
 const cards = deck[0].children;
 let cardList = [];
+let clickedTargets = [];
+let matches = 0;
+
 for(let card of cards){
     let name = card.children[0].className.slice(3);
     cardList.push(name);
@@ -24,11 +27,12 @@ while(deck[0].children.length > 0) {
     deck[0].children[0].remove();
 }
 
-
+let index = 0;
 // Populate deck with shuffledCards
 for(card of cardList) {
     let newCard = document.createElement('li');
     newCard.className = "card";
+    newCard.id = `card_${index++}`;
 
     let item = document.createElement('i');
     item.className = `fa ${card}`;
@@ -53,6 +57,51 @@ function shuffle(array) {
     return array;
 }
 
+function showCard(target) {
+
+    // Ignore existing matches
+    if (target.className != "card match") {
+        clickedTargets.push(target);
+
+        if(target.className.length === 4){
+            target.className = `${target.className} open show`;
+        }
+        else {
+            target.className = "card";
+        }
+    }
+    else {
+        console.log("ignoring match");
+    }
+}
+
+function checkMatch(){
+    console.log("checking for match");
+    let cardOne = clickedTargets.pop();
+    let cardTwo = clickedTargets.pop();
+
+    // Account for multiple clicks on the same card
+    if (cardOne === cardTwo) {
+        clickedTargets.pop();
+        return;
+     }
+
+    if (cardOne.children[0].className ===
+        cardTwo.children[0].className ) {
+            const newClass = `${cardOne.className.slice(0,4)} match`;
+            cardOne.className = newClass;
+            cardTwo.className = newClass;
+            matches++;
+    }
+    else {
+        cardOne.className = cardOne.className.slice(0, 4);
+        cardTwo.className = cardTwo.className.slice(0, 4);
+    }
+
+    if (matches === 8) {
+        console.log("Congratulations You won!!");
+    }
+}
 
 /*
  * set up the event listener for a card. If a card is clicked:
@@ -64,7 +113,18 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+for(let i = 0; i < deck[0].children.length; i++) {
+    let id = deck[0].children[i].id;
+    let element = document.getElementById(id);
 
+    element.addEventListener('click',
+        function(){
+            showCard(element);
+            if(clickedTargets.length > 1) {
+                checkMatch();
+            }
+        });
+}
 // Class names to use
 // open show on click
 // match on match
