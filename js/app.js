@@ -1,46 +1,51 @@
 /*
- * Create a list that holds all of your cards
+ * Create a list that holds all of your cards and
+ * initialize variables
  */
 const deck = document.getElementsByClassName('deck');
+const score = document.getElementsByClassName('moves');
 const cards = deck[0].children;
+const date = new Date();
+
 let cardList = [];
 let clickedTargets = [];
 let matches = 0;
+let moves = 0;
 
 for(let card of cards){
     let name = card.children[0].className.slice(3);
     cardList.push(name);
 }
-console.log(cardList);
+
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
-cardList = shuffle(cardList);
+function loadGameBoard() {
+    score[0].innerHTML = moves;
+    cardList = shuffle(cardList);
 
-console.log(cardList);
-
-// Clear the initial list
-while(deck[0].children.length > 0) {
-    deck[0].children[0].remove();
+    // Clear the initial list
+    while(deck[0].children.length > 0) {
+        deck[0].children[0].remove();
+    }
+    
+    let index = 0;
+    // Populate deck with shuffledCards
+    for(card of cardList) {
+        let newCard = document.createElement('li');
+        newCard.className = "card";
+        newCard.id = `card_${index++}`;
+    
+        let item = document.createElement('i');
+        item.className = `fa ${card}`;
+    
+        newCard.appendChild(item);
+        deck[0].appendChild(newCard);
+    }
 }
-
-let index = 0;
-// Populate deck with shuffledCards
-for(card of cardList) {
-    let newCard = document.createElement('li');
-    newCard.className = "card";
-    newCard.id = `card_${index++}`;
-
-    let item = document.createElement('i');
-    item.className = `fa ${card}`;
-
-    newCard.appendChild(item);
-    deck[0].appendChild(newCard);
-}
-
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -57,13 +62,13 @@ function shuffle(array) {
     return array;
 }
 
+// Show the card when clicked
 function showCard(target) {
-
     // Ignore existing matches
     if (target.className != "card match") {
         clickedTargets.push(target);
 
-        if(target.className.length === 4){
+        if(target.className === "card"){
             target.className = `${target.className} open show`;
         }
         else {
@@ -71,12 +76,12 @@ function showCard(target) {
         }
     }
     else {
-        console.log("ignoring match");
+        // ignoring matched clicks
     }
 }
 
-function checkMatch(){
-    console.log("checking for match");
+// Checks to see if two cards match
+function checkMatch() {
     let cardOne = clickedTargets.pop();
     let cardTwo = clickedTargets.pop();
 
@@ -98,9 +103,20 @@ function checkMatch(){
         cardTwo.className = cardTwo.className.slice(0, 4);
     }
 
-    if (matches === 8) {
-        console.log("Congratulations You won!!");
+    // Win condition
+    if (matches > 7) {
+        // Create and display modal
+
     }
+}
+
+// Start a new game. Shuffles card and hides them
+function startGame() {
+    matches = 0;
+    moves = 0;
+    // TODO: do something about the stars
+    loadGameBoard();
+    loadListeners();
 }
 
 /*
@@ -113,18 +129,29 @@ function checkMatch(){
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-for(let i = 0; i < deck[0].children.length; i++) {
-    let id = deck[0].children[i].id;
-    let element = document.getElementById(id);
+function loadListeners() {
+    for(let i = 0; i < deck[0].children.length; i++) {
+        let id = deck[0].children[i].id;
+        let element = document.getElementById(id);
 
-    element.addEventListener('click',
-        function(){
-            showCard(element);
-            if(clickedTargets.length > 1) {
-                checkMatch();
-            }
-        });
+        element.addEventListener('click',
+            function(){
+                showCard(element);
+                if(clickedTargets.length > 1) {
+                    moves++;
+                    score[0].innerHTML = moves;
+
+                    checkMatch();
+                }
+            });
+        }
 }
-// Class names to use
-// open show on click
-// match on match
+
+let restart = document.getElementsByClassName('restart');
+restart[0].addEventListener('click',
+    function() {
+        startGame();
+    });
+
+loadGameBoard();
+loadListeners();
