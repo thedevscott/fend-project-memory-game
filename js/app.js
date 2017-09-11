@@ -3,15 +3,19 @@
  * initialize variables
  */
 const deck = document.getElementsByClassName('deck');
+const stars = document.getElementsByClassName('stars');
 const score = document.getElementsByClassName('moves');
+const modal = document.getElementById("congrats");
 const cards = deck[0].children;
-const date = new Date();
 
 let cardList = [];
 let clickedTargets = [];
 let matches = 0;
+let matchStart = 0;
 let moves = 0;
 
+
+// Get a list of the cards from the initial HTML page
 for(let card of cards){
     let name = card.children[0].className.slice(3);
     cardList.push(name);
@@ -24,10 +28,13 @@ for(let card of cards){
  *   - add each card's HTML to the page
  */
 function loadGameBoard() {
+    // Reset the number of moves displayed on the page
     score[0].innerHTML = moves;
+
+    // Re-shuffle the cards
     cardList = shuffle(cardList);
 
-    // Clear the initial list
+    // Clear the last deck
     while(deck[0].children.length > 0) {
         deck[0].children[0].remove();
     }
@@ -64,10 +71,12 @@ function shuffle(array) {
 
 // Show the card when clicked
 function showCard(target) {
-    // Ignore existing matches
+
+    // only show unmatched cards
     if (target.className != "card match") {
         clickedTargets.push(target);
 
+        // update the class name of simple 'card' class for displaying
         if(target.className === "card"){
             target.className = `${target.className} open show`;
         }
@@ -77,6 +86,27 @@ function showCard(target) {
     }
     else {
         // ignoring matched clicks
+    }
+}
+
+/**
+ * Updates the star rating based on number of moves
+ * 3 stars for finishing with 8 moves
+ * 2 stars for finishing with 8-32 moves
+ * 1 star for lowest rating
+ */
+function updateRating() {
+    // 3 stars is the default
+    if ( stars[0].children[2].children[0].className === "fa fa-star" &&
+         moves > 8) {
+        // Remove one start for 2 star rating
+        stars[0].children[2].children[0].className += "-o";
+    }
+
+    if ( stars[0].children[1].children[0].className === "fa fa-star" &&
+        moves > 32) {
+        // Remove star for 1 star rating
+        stars[0].children[1].children[0].className += "-o";
     }
 }
 
@@ -96,6 +126,8 @@ function checkMatch() {
             const newClass = `${cardOne.className.slice(0,4)} match`;
             cardOne.className = newClass;
             cardTwo.className = newClass;
+            //cardOne.firstElementChild.style.marginLeft = "";
+            //cardTwo.firstElementChild.style.marginTop = "";
             matches++;
     }
     else {
@@ -105,18 +137,52 @@ function checkMatch() {
 
     // Win condition
     if (matches > 7) {
-        // Create and display modal
+        // update modal with time and number of moves
+        let modalTime = document.getElementById('win-time');
+        let modalMoves = document.getElementById('win-moves');
+        let modalRating = document.getElementById('win-rating');
+        const matchEnd = new Date().getTime();
 
+        // Loop through the stars and check their name
+        // increment starCount for each non *-o ending
+        let starCount = 0;
+        for(let i = 0; i < stars[0].children.length; ++i){
+            if(stars[0].children[i].children[0].className == "fa fa-star") {
+                ++starCount;
+            }
+        }
+
+        modalRating.innerHTML = `You earned a ${starCount} star rating!`;
+        modalTime.innerHTML = (matchStart-matchEnd) * 0.001 + " seconds";
+        modalMoves.innerHTML = moves.toString();
+
+        // Display modal
+        modal.style.display = "block";
+        modal.className += " in";
     }
 }
 
-// Start a new game. Shuffles card and hides them
+// used to restart the game from the modal
+function modalRestart() {
+    closeModal();
+    startGame();
+}
+
+// Start a new game be resetting relevant values and re-shuffling deck
 function startGame() {
     matches = 0;
     moves = 0;
-    // TODO: do something about the stars
+    stars[0].children[2].children[0].className = "fa fa-star";
+    stars[0].children[1].children[0].className = "fa fa-star";
+
     loadGameBoard();
     loadListeners();
+    matchStart = new Date().getTime();
+}
+
+function closeModal() {
+    modal.style.display = "none";
+    modal.className = modal.className.slice(0, -3);
 }
 
 /*
@@ -140,8 +206,8 @@ function loadListeners() {
                 if(clickedTargets.length > 1) {
                     moves++;
                     score[0].innerHTML = moves;
-
                     checkMatch();
+                    updateRating();
                 }
             });
         }
@@ -153,5 +219,4 @@ restart[0].addEventListener('click',
         startGame();
     });
 
-loadGameBoard();
-loadListeners();
+startGame();
