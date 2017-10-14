@@ -46,7 +46,7 @@ function loadGameBoard() {
         newCard.id = `card_${index++}`;
     
         let item = document.createElement('i');
-        item.className = `fa ${card}`;
+        item.className = `fa ${card} pos-fix`;
     
         newCard.appendChild(item);
         deck[0].appendChild(newCard);
@@ -109,8 +109,9 @@ function updateRating() {
     }
 }
 
-// Source: https://stackoverflow.com/questions/19700283/how-to-convert-time-milliseconds-to-hours-min-sec-format-in-javascript
 // Function to convert milliseconds to mins:secs
+// The original return value was modified to show min and secs
+// Source: https://stackoverflow.com/questions/19700283/how-to-convert-time-milliseconds-to-hours-min-sec-format-in-javascript
 function getYoutubeLikeToDisplay(millisec) {
     var seconds = (millisec / 1000).toFixed(0);
     var minutes = Math.floor(seconds / 60);
@@ -127,7 +128,7 @@ function getYoutubeLikeToDisplay(millisec) {
     if (hours != "") {
         return hours + ":" + minutes + ":" + seconds;
     }
-    return minutes + ":" + seconds;
+    return minutes + " min(s) and " + seconds + " secs";
 }
 
 // Checks to see if two cards match
@@ -143,11 +144,16 @@ function checkMatch() {
 
     if (cardOne.children[0].className ===
         cardTwo.children[0].className ) {
+            // remove pos-fix from the childs classname
+            const len = cardOne.children[0].className.length;
+            const iconClassName = cardOne.children[0].className.substring(0, len - 7);
+            cardOne.children[0].className = iconClassName;
+            cardTwo.children[0].className = iconClassName;
+
+            // Update classname for match
             const newClass = `${cardOne.className.slice(0,4)} match`;
             cardOne.className = newClass;
             cardTwo.className = newClass;
-            //cardOne.firstElementChild.style.marginLeft = "";
-            //cardTwo.firstElementChild.style.marginTop = "";
             matches++;
     }
     else {
@@ -174,7 +180,6 @@ function checkMatch() {
 
         const timePassed = getYoutubeLikeToDisplay(matchEnd-matchStart);
         modalRating.innerHTML = `You earned a ${starCount} star rating!`;
-        //modalTime.innerHTML = ((matchStart-matchEnd) * 0.001).toString() + " seconds";
         modalTime.innerHTML = timePassed.toString();
         modalMoves.innerHTML = moves.toString();
 
@@ -229,7 +234,9 @@ function loadListeners() {
                 if (clickedTargets.length > 1) {
                     moves++;
                     score[0].innerHTML = moves;
-                    checkMatch();
+                    // Apply half a second delay so the 2nd card shows
+                    setTimeout(function () {
+                        checkMatch()}, 500);
                     updateRating();
                 }
             });

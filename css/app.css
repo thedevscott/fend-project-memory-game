@@ -107,3 +107,10 @@ h1 {
     float: right;
     cursor: pointer;
 }
+
+/* Fix card icon position issue when including Bootstrap modal */
+.pos-fix {
+    position: relative;
+    left: 1.34em;
+    top: 1.2em;
+}
