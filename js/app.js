@@ -20,8 +20,8 @@ for (let card of cards) {
     cardList.push(name);
 }
 
-/*
- * Display the cards on the page
+/**
+ * @description Display the hidden cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
@@ -68,7 +68,9 @@ function shuffle(array) {
     return array;
 }
 
-// Show the card when clicked
+/**
+ * @description Shows a card when it is clicked
+ */
 function showCard(target) {
 
     // only show unmatched cards
@@ -89,7 +91,7 @@ function showCard(target) {
 }
 
 /**
- * Updates the star rating based on number of moves
+ * @description Updates the star rating based on number of moves
  * 3 stars for finishing with 8 moves
  * 2 stars for finishing with 8-32 moves
  * 1 star for lowest rating
@@ -109,9 +111,11 @@ function updateRating() {
     }
 }
 
-// Function to convert milliseconds to mins:secs
-// The original return value was modified to show min and secs
-// Source: https://stackoverflow.com/questions/19700283/how-to-convert-time-milliseconds-to-hours-min-sec-format-in-javascript
+/**
+ * @description Function to convert milliseconds to mins:secs
+ * The original return value was modified to show min and secs
+ * Source: https://stackoverflow.com/questions/19700283/how-to-convert-time-milliseconds-to-hours-min-sec-format-in-javascript
+ */
 function getYoutubeLikeToDisplay(millisec) {
     var seconds = (millisec / 1000).toFixed(0);
     var minutes = Math.floor(seconds / 60);
@@ -131,7 +135,9 @@ function getYoutubeLikeToDisplay(millisec) {
     return minutes + " min(s) and " + seconds + " secs";
 }
 
-// Checks to see if two cards match
+/**
+ * @description Checks to see if two cards match
+ */
 function checkMatch() {
     let cardOne = clickedTargets.pop();
     let cardTwo = clickedTargets.pop();
@@ -142,6 +148,7 @@ function checkMatch() {
         return;
      }
 
+    // Do we have a match?
     if (cardOne.children[0].className ===
         cardTwo.children[0].className ) {
             // remove pos-fix from the childs classname
@@ -172,8 +179,8 @@ function checkMatch() {
         // Loop through the stars and check their name
         // increment starCount for each non *-o ending
         let starCount = 0;
-        for(let i = 0; i < stars[0].children.length; ++i){
-            if(stars[0].children[i].children[0].className == "fa fa-star") {
+        for(let i = 0; i < stars[0].children.length; ++i) {
+            if (stars[0].children[i].children[0].className == "fa fa-star") {
                 ++starCount;
             }
         }
@@ -189,13 +196,17 @@ function checkMatch() {
     }
 }
 
-// Used to restart the game from the modal
+/**
+ * @description Used to restart the game from the modal
+ */
 function modalRestart() {
     closeModal();
     startGame();
 }
 
-// Start a new game be resetting relevant values and re-shuffling deck
+/**
+ * @description Start a new game be resetting relevant values and re-shuffling deck
+ */
 function startGame() {
     matches = 0;
     moves = 0;
@@ -207,14 +218,16 @@ function startGame() {
     matchStart = new Date().getTime();
 }
 
-// Used to hide the modal
+/**
+ * @description Used to hide the modal
+ */
 function closeModal() {
     modal.style.display = "none";
     modal.className = modal.className.slice(0, -3);
 }
 
-/*
- * set up the event listener for a card. If a card is clicked:
+/**
+ * @description set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
  *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
  *  - if the list already has another card, check to see if the two cards match
