@@ -5,7 +5,6 @@
 * [Instructions](#instructions)
 * [Contributing](#contributing)
 
-## Instructions
 
 Quick Start
 ------------
@@ -18,7 +17,8 @@ After starting a new game the clock starts ticking so be quick as you click thro
 
 Your star rating is based on the number of moves you've made.
 
-##Making Improvements
+Making Improvements
+--------------------
 
 To make improvements to the game modify the following files:
 
