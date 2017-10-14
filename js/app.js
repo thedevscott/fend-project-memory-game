@@ -8,15 +8,14 @@ const score = document.getElementsByClassName('moves');
 const modal = document.getElementById("congrats");
 const cards = deck[0].children;
 
-let cardList = [];
-let clickedTargets = [];
-let matches = 0;
-let matchStart = 0;
-let moves = 0;
-
+let cardList = [];        // List of cards used
+let clickedTargets = [];  // Cards clicked
+let matches = 0;          // Number of matches made
+let matchStart = 0;       // Time game started
+let moves = 0;            // Number of moves made by user
 
 // Get a list of the cards from the initial HTML page
-for(let card of cards){
+for (let card of cards) {
     let name = card.children[0].className.slice(3);
     cardList.push(name);
 }
@@ -35,13 +34,13 @@ function loadGameBoard() {
     cardList = shuffle(cardList);
 
     // Clear the last deck
-    while(deck[0].children.length > 0) {
+    while (deck[0].children.length > 0) {
         deck[0].children[0].remove();
     }
     
     let index = 0;
     // Populate deck with shuffledCards
-    for(card of cardList) {
+    for (card of cardList) {
         let newCard = document.createElement('li');
         newCard.className = "card";
         newCard.id = `card_${index++}`;
@@ -77,7 +76,7 @@ function showCard(target) {
         clickedTargets.push(target);
 
         // update the class name of simple 'card' class for displaying
-        if(target.className === "card"){
+        if (target.className === "card") {
             target.className = `${target.className} open show`;
         }
         else {
@@ -97,17 +96,38 @@ function showCard(target) {
  */
 function updateRating() {
     // 3 stars is the default
-    if ( stars[0].children[2].children[0].className === "fa fa-star" &&
-         moves > 8) {
+    if (stars[0].children[2].children[0].className === "fa fa-star" &&
+        moves > 8) {
         // Remove one start for 2 star rating
         stars[0].children[2].children[0].className += "-o";
     }
 
-    if ( stars[0].children[1].children[0].className === "fa fa-star" &&
+    if (stars[0].children[1].children[0].className === "fa fa-star" &&
         moves > 32) {
         // Remove star for 1 star rating
         stars[0].children[1].children[0].className += "-o";
     }
+}
+
+// Source: https://stackoverflow.com/questions/19700283/how-to-convert-time-milliseconds-to-hours-min-sec-format-in-javascript
+// Function to convert milliseconds to mins:secs
+function getYoutubeLikeToDisplay(millisec) {
+    var seconds = (millisec / 1000).toFixed(0);
+    var minutes = Math.floor(seconds / 60);
+    var hours = "";
+    if (minutes > 59) {
+        hours = Math.floor(minutes / 60);
+        hours = (hours >= 10) ? hours : "0" + hours;
+        minutes = minutes - (hours * 60);
+        minutes = (minutes >= 10) ? minutes : "0" + minutes;
+    }
+
+    seconds = Math.floor(seconds % 60);
+    seconds = (seconds >= 10) ? seconds : "0" + seconds;
+    if (hours != "") {
+        return hours + ":" + minutes + ":" + seconds;
+    }
+    return minutes + ":" + seconds;
 }
 
 // Checks to see if two cards match
@@ -152,8 +172,10 @@ function checkMatch() {
             }
         }
 
+        const timePassed = getYoutubeLikeToDisplay(matchEnd-matchStart);
         modalRating.innerHTML = `You earned a ${starCount} star rating!`;
-        modalTime.innerHTML = (matchStart-matchEnd) * 0.001 + " seconds";
+        //modalTime.innerHTML = ((matchStart-matchEnd) * 0.001).toString() + " seconds";
+        modalTime.innerHTML = timePassed.toString();
         modalMoves.innerHTML = moves.toString();
 
         // Display modal
@@ -162,7 +184,7 @@ function checkMatch() {
     }
 }
 
-// used to restart the game from the modal
+// Used to restart the game from the modal
 function modalRestart() {
     closeModal();
     startGame();
@@ -180,6 +202,7 @@ function startGame() {
     matchStart = new Date().getTime();
 }
 
+// Used to hide the modal
 function closeModal() {
     modal.style.display = "none";
     modal.className = modal.className.slice(0, -3);
@@ -196,14 +219,14 @@ function closeModal() {
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 function loadListeners() {
-    for(let i = 0; i < deck[0].children.length; i++) {
+    for (let i = 0; i < deck[0].children.length; i++) {
         let id = deck[0].children[i].id;
         let element = document.getElementById(id);
 
         element.addEventListener('click',
-            function(){
+            function() {
                 showCard(element);
-                if(clickedTargets.length > 1) {
+                if (clickedTargets.length > 1) {
                     moves++;
                     score[0].innerHTML = moves;
                     checkMatch();
@@ -213,6 +236,7 @@ function loadListeners() {
         }
 }
 
+// setup trigger for clicking restart icon
 let restart = document.getElementsByClassName('restart');
 restart[0].addEventListener('click',
     function() {
