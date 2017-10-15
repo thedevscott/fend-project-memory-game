@@ -13,6 +13,7 @@ let clickedTargets = [];  // Cards clicked
 let matches = 0;          // Number of matches made
 let matchStart = 0;       // Time game started
 let moves = 0;            // Number of moves made by user
+let elapsedTime;          // Used to stop interval timer
 
 // Get a list of the cards from the initial HTML page
 for (let card of cards) {
@@ -170,11 +171,18 @@ function checkMatch() {
 
     // Win condition
     if (matches > 7) {
+        // Stop the timer on the page
+        clearInterval(elapsedTime);
+
+        // Be consistant with the winning time
+        const matchEnd = new Date().getTime();
+        const timePassed = getYoutubeLikeToDisplay(matchEnd-matchStart);
+        gameTimer.innerHTML = timePassed;
+
         // update modal with time and number of moves
         let modalTime = document.getElementById('win-time');
         let modalMoves = document.getElementById('win-moves');
         let modalRating = document.getElementById('win-rating');
-        const matchEnd = new Date().getTime();
 
         // Loop through the stars and check their name
         // increment starCount for each non *-o ending
@@ -185,7 +193,6 @@ function checkMatch() {
             }
         }
 
-        const timePassed = getYoutubeLikeToDisplay(matchEnd-matchStart);
         modalRating.innerHTML = `You earned a ${starCount} star rating!`;
         modalTime.innerHTML = timePassed.toString();
         modalMoves.innerHTML = moves.toString();
@@ -254,6 +261,12 @@ function loadListeners() {
                 }
             });
         }
+
+        let = gameTimer = document.getElementById('timer');
+        gameTimer.addEventListener('onLoad',
+        elapsedTime = setInterval(function () {
+                gameTimer.innerHTML = getYoutubeLikeToDisplay((new Date().getTime())-matchStart);
+        }, 1000));
 }
 
 // setup trigger for clicking restart icon
