@@ -20,7 +20,7 @@ Your star rating is based on the number of moves you've made.
 Making Improvements
 --------------------
 
-To make improvements to the game modify the following files:
+To make improvements to the game modify the following files
 
 index.html
 -----------
