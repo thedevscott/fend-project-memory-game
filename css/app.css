@@ -114,3 +114,9 @@ h1 {
     left: 1.34em;
     top: 1.2em;
 }
+
+/* Put a bit of space between move counter and timer*/
+#timer {
+    position: relative;
+    left: 5rem;
+}
