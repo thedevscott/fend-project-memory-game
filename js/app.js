@@ -13,7 +13,7 @@ let clickedTargets = [];  // Cards clicked
 let matches = 0;          // Number of matches made
 let matchStart = 0;       // Time game started
 let moves = 0;            // Number of moves made by user
-let elapsedTime;          // Used to stop interval timer
+let elapsedTime = null;   // Used to stop interval timer
 
 // Get a list of the cards from the initial HTML page
 for (let card of cards) {
@@ -121,6 +121,7 @@ function getYoutubeLikeToDisplay(millisec) {
     var seconds = (millisec / 1000).toFixed(0);
     var minutes = Math.floor(seconds / 60);
     var hours = "";
+
     if (minutes > 59) {
         hours = Math.floor(minutes / 60);
         hours = (hours >= 10) ? hours : "0" + hours;
@@ -130,6 +131,7 @@ function getYoutubeLikeToDisplay(millisec) {
 
     seconds = Math.floor(seconds % 60);
     seconds = (seconds >= 10) ? seconds : "0" + seconds;
+
     if (hours != "") {
         return hours + ":" + minutes + ":" + seconds;
     }
@@ -264,9 +266,9 @@ function loadListeners() {
 
         let = gameTimer = document.getElementById('timer');
         gameTimer.addEventListener('onLoad',
-        elapsedTime = setInterval(function () {
+        Object(elapsedTime = setInterval(function () {
                 gameTimer.innerHTML = getYoutubeLikeToDisplay((new Date().getTime())-matchStart);
-        }, 1000));
+        }, 1000)));
 }
 
 // setup trigger for clicking restart icon
